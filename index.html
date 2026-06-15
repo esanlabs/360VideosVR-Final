@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>ESAN RV- Trayectoria Histórica</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script>
+      // ========================================================
+      // FUNCIONES DE DIBUJO DE ICONOS (Canvas 2D)
+      // ========================================================
+      function drawHistoriaIcon(ctx, s) {
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.fillStyle = '#e8e8e8';
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.22); ctx.lineTo(s*.16,s*.28); ctx.lineTo(s*.16,s*.78); ctx.lineTo(s*.5,s*.72); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.22); ctx.lineTo(s*.84,s*.28); ctx.lineTo(s*.84,s*.78); ctx.lineTo(s*.5,s*.72); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#aaaaaa';
+        for(let i=0;i<4;i++){ ctx.fillRect(s*.2,s*(.36+i*.1),s*.22,s*.022); ctx.fillRect(s*.54,s*(.36+i*.1),s*.22,s*.022); }
+        ctx.strokeStyle='#aaaaaa'; ctx.lineWidth=s*.035;
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.22); ctx.lineTo(s*.5,s*.72); ctx.stroke();
+        ctx.strokeStyle='#777'; ctx.lineWidth=s*.028;
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.22); ctx.lineTo(s*.16,s*.28); ctx.lineTo(s*.16,s*.78); ctx.lineTo(s*.5,s*.72); ctx.lineTo(s*.84,s*.78); ctx.lineTo(s*.84,s*.28); ctx.closePath(); ctx.stroke();
+        ctx.strokeStyle='#ffffff'; ctx.lineWidth=s*.042;
+        ctx.beginPath(); ctx.moveTo(s*.16,s*.78); ctx.quadraticCurveTo(s*.5,s*.9,s*.84,s*.78); ctx.stroke();
+        ctx.fillStyle='#E3173E';
+        ctx.beginPath(); ctx.moveTo(s*.64,s*.17); ctx.lineTo(s*.76,s*.17); ctx.lineTo(s*.76,s*.42); ctx.lineTo(s*.7,s*.36); ctx.lineTo(s*.64,s*.42); ctx.closePath(); ctx.fill();
+      }
+
+      function drawFundadorIcon(ctx, s) {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.arc(s*.5,s*.29,s*.17,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(s*.5,s*.82,s*.30,Math.PI,0); ctx.fill();
+        ctx.fillRect(s*.43,s*.42,s*.14,s*.11);
+        ctx.fillStyle = '#E3173E';
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.53); ctx.lineTo(s*.43,s*.60); ctx.lineTo(s*.5,s*.74); ctx.lineTo(s*.57,s*.60); ctx.closePath(); ctx.fill();
+      }
+
+      function drawCarrerasIcon(ctx, s) {
+        ctx.lineCap='round'; ctx.lineJoin='round';
+        function star4(cx,cy,r){ ctx.save(); ctx.translate(cx,cy); ctx.beginPath(); for(let i=0;i<8;i++){ const r2=i%2===0?r:r*.42; const a=(i*Math.PI/4)-Math.PI/2; i===0?ctx.moveTo(Math.cos(a)*r2,Math.sin(a)*r2):ctx.lineTo(Math.cos(a)*r2,Math.sin(a)*r2); } ctx.closePath(); ctx.fill(); ctx.restore(); }
+        // Nose cone
+        ctx.fillStyle='#ffffff';
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.07); ctx.lineTo(s*.36,s*.46); ctx.lineTo(s*.64,s*.46); ctx.closePath(); ctx.fill();
+        // Body
+        ctx.fillRect(s*.36,s*.44,s*.28,s*.32);
+        // Left fin
+        ctx.beginPath(); ctx.moveTo(s*.36,s*.60); ctx.lineTo(s*.17,s*.77); ctx.lineTo(s*.36,s*.77); ctx.closePath(); ctx.fill();
+        // Right fin
+        ctx.beginPath(); ctx.moveTo(s*.64,s*.60); ctx.lineTo(s*.83,s*.77); ctx.lineTo(s*.64,s*.77); ctx.closePath(); ctx.fill();
+        // Window dark
+        ctx.fillStyle='#0d0d1a';
+        ctx.beginPath(); ctx.arc(s*.5,s*.52,s*.076,0,Math.PI*2); ctx.fill();
+        // Window gleam
+        ctx.fillStyle='rgba(255,255,255,0.45)';
+        ctx.beginPath(); ctx.arc(s*.47,s*.49,s*.028,0,Math.PI*2); ctx.fill();
+        // Red flame
+        ctx.fillStyle='#E3173E';
+        ctx.beginPath(); ctx.moveTo(s*.39,s*.76); ctx.lineTo(s*.5,s*.96); ctx.lineTo(s*.61,s*.76); ctx.closePath(); ctx.fill();
+        // Yellow inner flame
+        ctx.fillStyle='rgba(255,210,50,0.95)';
+        ctx.beginPath(); ctx.moveTo(s*.43,s*.76); ctx.lineTo(s*.5,s*.87); ctx.lineTo(s*.57,s*.76); ctx.closePath(); ctx.fill();
+        // Decorative stars
+        ctx.fillStyle='#E3173E'; star4(s*.2,s*.2,s*.055);
+        ctx.fillStyle='#ffffff'; star4(s*.8,s*.15,s*.042); star4(s*.14,s*.5,s*.032);
+      }
+
+      function drawLabsIcon(ctx, s) {
+        ctx.lineCap='round'; ctx.lineJoin='round';
+        ctx.fillStyle='rgba(255,255,255,0.1)';
+        ctx.beginPath(); ctx.moveTo(s*.42,s*.14); ctx.lineTo(s*.42,s*.48); ctx.lineTo(s*.16,s*.80); ctx.quadraticCurveTo(s*.13,s*.89,s*.24,s*.90); ctx.lineTo(s*.76,s*.90); ctx.quadraticCurveTo(s*.87,s*.89,s*.84,s*.80); ctx.lineTo(s*.58,s*.48); ctx.lineTo(s*.58,s*.14); ctx.closePath(); ctx.fill();
+        ctx.fillStyle='#E3173E';
+        ctx.beginPath(); ctx.moveTo(s*.22,s*.77); ctx.lineTo(s*.42,s*.56); ctx.lineTo(s*.58,s*.56); ctx.lineTo(s*.78,s*.77); ctx.quadraticCurveTo(s*.84,s*.88,s*.76,s*.89); ctx.lineTo(s*.24,s*.89); ctx.quadraticCurveTo(s*.16,s*.88,s*.22,s*.77); ctx.fill();
+        ctx.strokeStyle='#ffffff'; ctx.lineWidth=s*.055;
+        ctx.beginPath(); ctx.moveTo(s*.42,s*.14); ctx.lineTo(s*.42,s*.48); ctx.lineTo(s*.16,s*.80); ctx.quadraticCurveTo(s*.13,s*.89,s*.24,s*.90); ctx.lineTo(s*.76,s*.90); ctx.quadraticCurveTo(s*.87,s*.89,s*.84,s*.80); ctx.lineTo(s*.58,s*.48); ctx.lineTo(s*.58,s*.14); ctx.stroke();
+        ctx.fillStyle='#ffffff'; ctx.fillRect(s*.35,s*.10,s*.30,s*.07);
+        ctx.fillStyle='rgba(255,255,255,0.85)';
+        ctx.beginPath(); ctx.arc(s*.37,s*.74,s*.040,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(s*.56,s*.78,s*.032,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(s*.46,s*.67,s*.026,0,Math.PI*2); ctx.fill();
+      }
+
+      function drawTourIcon(ctx, s) {
+        ctx.lineCap='round'; ctx.lineJoin='round';
+        ctx.fillStyle='#ffffff';
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.10); ctx.lineTo(s*.88,s*.42); ctx.lineTo(s*.12,s*.42); ctx.closePath(); ctx.fill();
+        ctx.fillRect(s*.18,s*.40,s*.64,s*.46);
+        ctx.fillStyle='#0a0a14'; ctx.fillRect(s*.41,s*.63,s*.18,s*.23);
+        ctx.fillStyle='#E3173E'; ctx.fillRect(s*.23,s*.48,s*.15,s*.12); ctx.fillRect(s*.62,s*.48,s*.15,s*.12);
+        ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillRect(s*.24,s*.49,s*.05,s*.04); ctx.fillRect(s*.63,s*.49,s*.05,s*.04);
+        ctx.strokeStyle='#E3173E'; ctx.lineWidth=s*.03;
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.01); ctx.lineTo(s*.5,s*.12); ctx.stroke();
+        ctx.fillStyle='#E3173E';
+        ctx.beginPath(); ctx.moveTo(s*.5,s*.01); ctx.lineTo(s*.5,s*.11); ctx.lineTo(s*.65,s*.06); ctx.closePath(); ctx.fill();
+      }
+
+      function drawProntoIcon(ctx, s) {
+        ctx.lineCap='round'; ctx.lineJoin='round';
+        // Frame top bar
+        ctx.fillStyle='#ffffff'; ctx.fillRect(s*.2,s*.10,s*.6,s*.055);
+        // Frame bottom bar
+        ctx.fillRect(s*.2,s*.845,s*.6,s*.055);
+        // Top glass (outline)
+        ctx.strokeStyle='#ffffff'; ctx.lineWidth=s*.038;
+        ctx.beginPath(); ctx.moveTo(s*.22,s*.155); ctx.lineTo(s*.5,s*.50); ctx.lineTo(s*.78,s*.155); ctx.closePath(); ctx.stroke();
+        // Bottom glass (outline)
+        ctx.beginPath(); ctx.moveTo(s*.22,s*.845); ctx.lineTo(s*.5,s*.50); ctx.lineTo(s*.78,s*.845); ctx.closePath(); ctx.stroke();
+        // Sand top (red)
+        ctx.fillStyle='#E3173E';
+        ctx.beginPath(); ctx.moveTo(s*.3,s*.155); ctx.lineTo(s*.7,s*.155); ctx.lineTo(s*.5,s*.40); ctx.closePath(); ctx.fill();
+        // Sand bottom pool (red)
+        ctx.beginPath(); ctx.moveTo(s*.38,s*.845); ctx.lineTo(s*.62,s*.845); ctx.lineTo(s*.5,s*.65); ctx.closePath(); ctx.fill();
+        // Falling sand thread
+        ctx.fillRect(s*.477,s*.48,s*.046,s*.18);
+        // Inner glass shimmer
+        ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=s*.022;
+        ctx.beginPath(); ctx.moveTo(s*.32,s*.175); ctx.lineTo(s*.45,s*.35); ctx.stroke();
+      }
+
+      function drawYoutubeIcon(ctx, s) {
+        ctx.lineCap='round'; ctx.lineJoin='round';
+        // Red rounded rect (YouTube button shape)
+        ctx.fillStyle='#E3173E';
+        const x=s*.1, y=s*.22, w=s*.8, h=s*.52, r=s*.10;
+        ctx.beginPath();
+        ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+        ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+        ctx.lineTo(x+w,y+h-r);
+        ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+        ctx.lineTo(x+r,y+h);
+        ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+        ctx.lineTo(x,y+r);
+        ctx.quadraticCurveTo(x,y,x+r,y);
+        ctx.closePath(); ctx.fill();
+        // White play triangle
+        ctx.fillStyle='#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(s*.37,s*.31); ctx.lineTo(s*.75,s*.48); ctx.lineTo(s*.37,s*.65);
+        ctx.closePath(); ctx.fill();
+        // "360Â°" label
+        ctx.fillStyle='#ffffff';
+        ctx.font='bold '+Math.floor(s*.135)+'px sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('360°', s*.5, s*.87);
+      }
+
+      // ========================================================
+      // COMPONENTE: ICONO CANVAS
+      // ========================================================
+      AFRAME.registerComponent('canvas-icon', {
+        schema: { type: { type: 'string', default: 'historia' } },
+        init: function() {
+          const self = this;
+          this._apply = function() {
+            const mesh = self.el.getObject3D('mesh');
+            if (!mesh) return;
+            const size = 256;
+            const c = document.createElement('canvas');
+            c.width = size; c.height = size;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#0d0d1a';
+            ctx.fillRect(0, 0, size, size);
+            const fns = { historia: drawHistoriaIcon, fundador: drawFundadorIcon, carreras: drawCarrerasIcon, labs: drawLabsIcon, tour: drawTourIcon, pronto: drawProntoIcon, youtube: drawYoutubeIcon };
+            if (fns[self.data.type]) fns[self.data.type](ctx, size);
+            const tex = new THREE.CanvasTexture(c);
+            mesh.material.map = tex;
+            mesh.material.transparent = false;
+            mesh.material.needsUpdate = true;
+          };
+          this.el.addEventListener('object3dset', this._apply);
+          setTimeout(this._apply, 50);
+        }
+      });
+
+      // ========================================================
+      // COMPONENTE THREE.JS: CUBOS VIVOS (ROJO, CELESTE, BLANCO)
+      // ========================================================
+      AFRAME.registerComponent('cubos-digitales', {
+        init: function () {
+          const scene3D = this.el.sceneEl.object3D;
+          this.count = 1000; // Cantidad Ã³ptima y fluida para VR
+
+          this.geometry = new THREE.BufferGeometry();
+          const positions = new Float32Array(this.count * 3);
+          const colors = new Float32Array(this.count * 3);
+
+          // Paleta de Colores Solicitada (SÃ³lidos)
+          const colorRojo = new THREE.Color(0xff0026);    // Rojo intenso
+          const colorCeleste = new THREE.Color(0x00bfff); // Celeste digital
+          const colorBlanco = new THREE.Color(0xffffff);  // Blanco puro
+
+          this.velocities = [];
+
+          for (let i = 0; i < this.count; i++) {
+            // DistribuciÃ³n en un entorno envolvente completo alrededor de la cÃ¡mara
+            positions[i * 3] = (Math.random() - 0.5) * 50;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 40 + 1.6; // Centrado a la altura de los ojos en VR
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+
+            // SelecciÃ³n aleatoria estricta entre Rojo, Celeste y Blanco
+            const rand = Math.random();
+            let selectedColor;
+            if (rand < 0.33) {
+              selectedColor = colorRojo;
+            } else if (rand < 0.66) {
+              selectedColor = colorCeleste;
+            } else {
+              selectedColor = colorBlanco;
+            }
+
+            colors[i * 3] = selectedColor.r;
+            colors[i * 3 + 1] = selectedColor.g;
+            colors[i * 3 + 2] = selectedColor.b;
+
+            // Velocidades de movimiento tridimensional continuo
+            this.velocities.push((Math.random() - 0.5) * 0.02); // X
+            this.velocities.push((Math.random() - 0.5) * 0.02); // Y
+            this.velocities.push((Math.random() - 0.5) * 0.02); // Z
+          }
+
+          this.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+          this.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+          // Crear una textura blanca cuadrada en memoria para que responda a gl_PointSize correctamente
+          const canvas = document.createElement('canvas');
+          canvas.width = 16;
+          canvas.height = 16;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, 16, 16);
+          const texture = new THREE.CanvasTexture(canvas);
+
+          // Renderizado de profundidad estÃ¡ndar para mantener colores sÃ³lidos frente al fondo claro
+          this.material = new THREE.PointsMaterial({
+            size: 0.22,
+            vertexColors: true,
+            transparent: true,
+            opacity: 1.0,
+            map: texture,
+            blending: THREE.NormalBlending
+          });
+
+          this.particleSystem = new THREE.Points(this.geometry, this.material);
+          scene3D.add(this.particleSystem);
+        },
+
+        // Ciclo de renderizado continuo (Garantiza el movimiento perpetuo)
+        tick: function (time, timeDelta) {
+          if (!this.particleSystem) return;
+
+          const pos = this.geometry.attributes.position.array;
+
+          // AnimaciÃ³n de tamaÃ±o chica y controlada (Entre 0.12 y 0.28)
+          this.material.size = (Math.sin(time * 0.002) * 0.08) + 0.20;
+
+          for (let i = 0; i < this.count; i++) {
+            const i3 = i * 3;
+
+            // Movimiento constante en los 3 ejes (FlotaciÃ³n por el espacio)
+            pos[i3] += this.velocities[i3];
+            pos[i3 + 1] += this.velocities[i3 + 1];
+            pos[i3 + 2] += this.velocities[i3 + 2];
+
+            // LÃ­mites espaciales (Efecto rebote)
+            if (Math.abs(pos[i3]) > 25) this.velocities[i3] *= -1;
+            if (Math.abs(pos[i3 + 1] - 1.6) > 20) this.velocities[i3 + 1] *= -1;
+            if (Math.abs(pos[i3 + 2]) > 25) this.velocities[i3 + 2] *= -1;
+          }
+
+          this.geometry.attributes.position.needsUpdate = true;
+
+          // RotaciÃ³n general constante de toda la nube de cubos
+          this.particleSystem.rotation.y += 0.0005;
+          this.particleSystem.rotation.x += 0.0002;
+        }
+      });
+    </script>
+  <style>
+    #youtubeOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+    }
+    #youtubeOverlay iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    #btnCerrarYT {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 10000;
+      background: #E3173E;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #btnCerrarYT:hover { background: #c01030; }
+  </style>
+</head>
+
+<body>
+
+<!-- Overlay fullscreen YouTube -->
+<div id="youtubeOverlay">
+  <button id="btnCerrarYT" onclick="cerrarYoutube()" title="Cerrar">&#x2715;</button>
+  <iframe id="youtubeFrame" src=""
+          allow="autoplay; fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
+          allowfullscreen>
+  </iframe>
+</div>
+
+<a-scene>
+
+  <a-assets>
+    <img id="imgLobby" src="jardinnn.jpg">
+    <img id="imgAuditorio" src="btcss-1.jpg">
+    <img id="imgAuditorio2" src="btcss-1.jpg">
+    <img id="imgEvento" src="fuentte.jpg">
+    <img id="imgLabsNuevos" src="eventoss.jpg">
+
+    <img id="imgPiso" src="pisoLogo.webp">
+    <img id="imgDitiLogo" src="DITI_LOGO_BLANCO.png">
+    <img id="imgEsanLabs" src="esanLabs.png">
+    <img id="imagenLibro" src="libroo.png" crossorigin="anonymous">
+
+    <audio id="audioBienvenida" src="audio.mp3" preload="auto" crossorigin="anonymous"></audio>
+
+    <video id="videoUni" src="video2.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+    <video id="videoFundador" src="video6a.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+    <video id="video8" src="cars.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+    <video id="video7a" src="video7a.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+    <video id="videoDirecto" src="https://esanlabs.blob.core.windows.net/media/robotica_172.mp4?sv=2025-07-05&spr=https&st=2026-06-15T04%3A23%3A27Z&se=2027-11-16T04%3A23%3A00Z&sr=b&sp=r&sig=kFYUPKRwLlq7FNZM1oBcgt8UwxkTXdGW%2FIihLOv85WA%3D" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video>
+    <!-- <video id="videoRobotica" src="https://esanlabs.blob.core.windows.net/media/robotica_175.mp4?sv=2025-07-05&spr=https&st=2026-06-09T00%3A30%3A06Z&se=2027-06-10T00%3A30%3A00Z&sr=b&sp=r&sig=vmMtpmUZ4IzcfrQwpG1w%2Bz7m5%2Fb5OOnADNRd4lW6YOM%3D" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video> -->
+    <!-- <video id="videoRobotica" src="robotica_175.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video> -->
+    <video id="videoRobotica" src="https://esanlabs.blob.core.windows.net/media/robotica_175.mp4?sv=2025-07-05&spr=https&st=2026-06-11T21%3A34%3A39Z&se=2027-07-12T21%3A34%3A00Z&sr=b&sp=r&sig=VDpubOuDko%2BhZ77tvNOIenVtN9oCLN8uKgJZA8puwBA%3D" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video>
+    <!-- <video id="videoRobotica" src="https://esanlabs.blob.core.windows.net/media/2Grobotica.mp4?sv=2025-07-05&spr=https&st=2026-06-11T21%3A49%3A12Z&se=2026-06-12T21%3A49%3A12Z&sr=b&sp=r&sig=nE76NnwPe9OWxib8ggBloZEK0jpoKfQF7NfmbTxe8Ug%3D" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video> -->
+  </a-assets>
+
+  <a-sky id="skyPrincipal" src="#imgLobby" radius="40" rotation="0 -90 0"></a-sky>
+
+  <a-videosphere id="esferaRobotica" src="#videoRobotica" rotation="0 -90 0" visible="false"></a-videosphere>
+
+  <a-plane id="pisoLogo"
+            src="#imgPiso"
+            width="1.66"
+            height="1.66"
+            rotation="-90 0 0"
+            position="0 0 0"
+            material="shader: flat; transparent: true; alphaTest: 0.1"></a-plane>
+
+  <a-entity cubos-digitales></a-entity>
+
+  <a-sky id="skyButacas" src="#imgAuditorio" radius="40" rotation="0 -90 0" visible="false"></a-sky>
+
+  <a-entity id="oscurecerButacas"
+            geometry="primitive: sphere; radius: 39"
+            material="shader: flat; color: black; side: back; transparent: true; opacity: 0"
+            visible="false"
+            animation__oscurecer="property: material.opacity; to: 0.85; dur: 5000; startEvents: luzOff"
+            animation__aclarar="property: material.opacity; to: 0; dur: 1000; startEvents: luzOn">
+  </a-entity>
+
+  <a-entity id="panelBienvenida" visible="false" position="0 1.6 -15"
+            animation__pos="property: position; to: 0 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 500"
+            animation__fade="property: material.opacity; from: 1; to: 0; dur: 2000; delay: 8000"
+            animation__visible="property: visible; to: false; delay: 10000">
+      <a-plane width="2.2" height="0.5" color="#FFFFFF" opacity="0.65"></a-plane>
+      <a-plane width="0.05" height="0.45" color="#E3173E" position="-1 0 0.01"></a-plane>
+      <a-text value="Bienvenido al Universo ESAN" color="#E3173E" width="2.1" align="left" position="-0.85 0.12 0.02" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf"></a-text>
+      <a-text value="Descubre nuestro legado y vive el futuro" color="#696a6d" width="2.0" align="left" position="-0.85 -0.10 0.02" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf"></a-text>
+  </a-entity>
+
+  <a-entity id="grupoCine" visible="false">
+    <a-video id="pantallaVideo"
+             src="#videoUni"
+             width="32"
+             height="16"
+             material="shader: flat"
+             animation__entrar="property: scale; from: 0 0 0; to: 1 1 1; dur: 3000; easing: easeOutQuad; startEvents: videoEntra"
+             animation__salir="property: scale; to: 0 0 0; dur: 1500; easing: easeInBack; startEvents: videoSale">
+    </a-video>
+
+    <a-entity id="interfaz" position="0 -8.5 0.1">
+      <a-plane id="barraFondo" width="20" height="0.4" color="#696a6d" position="0 0 0"></a-plane>
+      <a-plane id="barraProgreso" width="0.1" height="0.4" color="#E3173E" position="-10 0 0.01"></a-plane>
+      <a-text id="textoDuracion" value="0:00 / 0:00" align="left" position="10.5 0.3 0.1" width="12" font="mozillavr" shader="msdf" negate="false"></a-text>
+
+      <a-entity id="controles" position="0 -1.8 0">
+        <a-circle id="btnReset" class="clickable" radius="1.1" color="#FFFFFF" position="-8 0 0"
+                  animation__scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+                  animation__rescale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+          <a-entity position="0 0 0.02" scale="1.8 1.8 1">
+            <a-plane width="0.32" height="0.08" color="#000000" material="shader:flat" position="0 0.16 0"></a-plane>
+            <a-plane width="0.32" height="0.08" color="#000000" material="shader:flat" position="0 -0.16 0"></a-plane>
+            <a-plane width="0.08" height="0.4" color="#000000" material="shader:flat" position="-0.16 0 0"></a-plane>
+            <a-plane width="0.08" height="0.16" color="#000000" material="shader:flat" position="0.16 -0.08 0"></a-plane>
+            <a-entity geometry="primitive: triangle; vertexA: 0.16 0.28 0; vertexB: -0.02 0.08 0; vertexC: 0.34 0.08 0" material="shader:flat; color:#000000"></a-entity>
+          </a-entity>
+        </a-circle>
+
+        <a-circle id="btnNormal" class="clickable" radius="1.1" color="#FFFFFF" position="-4 0 0"
+                  animation__scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+                  animation__rescale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+          <a-text value="1x" color="#E3173E" align="center" baseline="center" width="6" wrap-count="15" font="mozillavr" shader="msdf" negate="false" position="0 0.25 0.1"></a-text>
+        </a-circle>
+
+        <a-circle id="btnPausa" class="clickable" radius="1.4" color="#E3173E" position="0 0 0"
+                  animation__scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+                  animation__rescale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+          <a-entity id="iconPausaContainer" position="0 0 0.02" scale="1.8 1.8 1">
+            <a-plane id="lineaPausa1" width="0.12" height="0.45" color="#FFFFFF" material="shader:flat" position="-0.12 0 0"></a-plane>
+            <a-plane id="lineaPausa2" width="0.12" height="0.45" color="#FFFFFF" material="shader:flat" position="0.12 0 0"></a-plane>
+            <a-entity id="trianguloPlay" geometry="primitive: triangle; vertexA: 0.22 0 0; vertexB: -0.14 0.22 0; vertexC: -0.14 -0.22 0" material="shader:flat; color:#FFFFFF" visible="false"></a-entity>
+          </a-entity>
+        </a-circle>
+
+        <a-circle id="btnRapido" class="clickable" radius="1.1" color="#FFFFFF" position="4 0 0"
+                  animation__scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+                  animation__rescale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+          <a-text value="2x >>" color="#E3173E" align="center" baseline="center" width="6" wrap-count="15" font="mozillavr" shader="msdf" negate="false" position="0 0.25 0.1"></a-text>
+        </a-circle>
+
+        <a-circle id="btnSalir" class="clickable" radius="1.1" color="#E3173E" position="8 0 0"
+                  animation__scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+                  animation__rescale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+          <a-entity position="0 0 0.02" scale="1.8 1.8 1">
+            <a-plane width="0.28" height="0.22" color="#FFFFFF" material="shader:flat" position="0 -0.06 0"></a-plane>
+            <a-entity geometry="primitive: triangle; vertexA: 0 0.20 0; vertexB: -0.20 0.04 0; vertexC: 0.20 0.04 0" material="shader:flat; color:#FFFFFF"></a-entity>
+          </a-entity>
+        </a-circle>
+      </a-entity>
+    </a-entity>
+  </a-entity>
+
+  <a-entity id="bloqueNavegacionPrincipal" position="-1.1 0 0">
+
+  <a-entity id="redNeuronal" visible="true">
+    <a-entity id="lineaFundador"
+              line="start: -1.65 1.6 -15; end: -0.55 1.1 -15; color: #FFFFFF; opacity: 0.8"
+              animation__start="property: line.start; to: -1.65 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
+              animation__end="property: line.end; to: -0.55 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    </a-entity>
+    <a-entity id="lineaLaboratorios"
+              line="start: -0.55 1.1 -15; end: 0.55 1.6 -15; color: #FFFFFF; opacity: 0.8"
+              animation__start="property: line.start; to: -0.55 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
+              animation__end="property: line.end; to: 0.55 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    </a-entity>
+    <a-entity id="lineaNuevosLabs"
+              line="start: 0.55 1.6 -15; end: 1.65 1.1 -15; color: #FFFFFF; opacity: 0.8"
+              animation__start="property: line.start; to: 0.55 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
+              animation__end="property: line.end; to: 1.65 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    </a-entity>
+    <a-entity id="lineaVideoDirecto"
+              line="start: 1.65 1.1 -15; end: 2.75 1.6 -15; color: #FFFFFF; opacity: 0.6"
+              animation__start="property: line.start; to: 1.65 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
+              animation__end="property: line.end; to: 2.75 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    </a-entity>
+    <a-entity id="lineaYoutube"
+              line="start: 2.75 1.6 -15; end: 3.85 1.1 -15; color: #FFFFFF; opacity: 0.6"
+              animation__start="property: line.start; to: 2.75 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
+              animation__end="property: line.end; to: 3.85 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    </a-entity>
+  </a-entity>
+
+  <a-entity id="contenedorBoton" position="-1.65 1.6 -15"
+            animation="property: position; to: -1.65 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+    <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+            radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+            animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 1800; loop: true; easing: easeInOutSine; dir: alternate"
+            animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 1800; loop: true; easing: easeInOutSine; dir: alternate">
+    </a-ring>
+    <a-circle id="btnAccion" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+              animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
+              animation__mouseleave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave">
+      <a-circle radius="0.38" canvas-icon="type: historia" material="shader: flat" position="0 0 0.02"></a-circle>
+    </a-circle>
+    <a-text value="Nuestra\nHistoria" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+    <a-text id="textoBoton" value="Nuestra\nHistoria" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+  </a-entity>
+
+  <a-entity id="contenedorBotonFundador" position="-0.55 1.1 -15"
+            animation="property: position; to: -0.55 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+    <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+            radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+            animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 2100; loop: true; easing: easeInOutSine; dir: alternate"
+            animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 2100; loop: true; easing: easeInOutSine; dir: alternate">
+    </a-ring>
+    <a-circle id="btnFundador" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+              animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
+              animation__mouseleave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave">
+      <a-circle radius="0.38" canvas-icon="type: fundador" material="shader: flat" position="0 0 0.02"></a-circle>
+    </a-circle>
+    <a-text value="Nuestro\nFundador" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+    <a-text id="textoBotonFundador" value="Nuestro\nFundador" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+  </a-entity>
+
+  <a-entity id="contenedorBotonLabs" position="0.55 1.6 -15"
+            animation="property: position; to: 0.55 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+    <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+            radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+            animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 1500; loop: true; easing: easeInOutSine; dir: alternate"
+            animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 1500; loop: true; easing: easeInOutSine; dir: alternate">
+    </a-ring>
+    <a-circle id="btnLaboratorios" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+              animation__scale="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
+              animation__rescale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+      <a-circle radius="0.38" canvas-icon="type: carreras" material="shader: flat" position="0 0 0.02"></a-circle>
+    </a-circle>
+    <a-text value="Carreras que\nTransforman" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+    <a-text id="textoBotonLabs" value="Carreras que\nTransforman" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+  </a-entity>
+
+  <a-entity id="contenedorNuevosLabs" position="1.65 1.1 -15"
+            animation="property: position; to: 1.65 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+    <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+            radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+            animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 2400; loop: true; easing: easeInOutSine; dir: alternate"
+            animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 2400; loop: true; easing: easeInOutSine; dir: alternate">
+    </a-ring>
+    <a-circle id="btnNuevosLabs" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+              animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
+              animation__mouseleave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave">
+      <a-circle radius="0.38" canvas-icon="type: labs" material="shader: flat" position="0 0 0.02"></a-circle>
+    </a-circle>
+    <a-text value="Laboratorios\nTech" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+    <a-text id="textoBotonNuevosLabs" value="Laboratorios\nTech" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+  </a-entity>
+
+        <a-entity id="contenedorBotonVideoDirecto" position="2.75 1.6 -15"
+          animation="property: position; to: 2.75 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+        <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+        <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+          radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+          animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 1700; loop: true; easing: easeInOutSine; dir: alternate"
+          animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 1700; loop: true; easing: easeInOutSine; dir: alternate">
+        </a-ring>
+        <a-circle id="btnVideoDirecto" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+            animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
+            animation__mouseleave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave">
+          <a-circle radius="0.38" canvas-icon="type: youtube" material="shader: flat" position="0 0 0.02"></a-circle>
+        </a-circle>
+        <a-text value="Video 360\n1" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+        <a-text id="textoBotonVideoDirecto" value="Video 360\n1" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+      </a-entity>
+
+        <a-entity id="contenedorBotonYoutube" position="3.85 1.1 -15"
+          animation="property: position; to: 3.85 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+    <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+            radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+            animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 1700; loop: true; easing: easeInOutSine; dir: alternate"
+            animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 1700; loop: true; easing: easeInOutSine; dir: alternate">
+    </a-ring>
+    <a-circle id="btnYoutube" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+              animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
+              animation__mouseleave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave">
+      <a-circle radius="0.38" canvas-icon="type: youtube" material="shader: flat" position="0 0 0.02"></a-circle>
+    </a-circle>
+    <a-text value="Video 360\n2" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+    <a-text id="textoBotonYoutube" value="Video 360\n2" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+  </a-entity>
+  <a-entity id="panelPresentacionEsan" position="0.90 2.82 -15" scale="1 1 1"
+            animation__entrar="property: position; from: 1.35 2.82 -15; to: 1.35 2.82 -2.5; dur: 7000; easing: easeOutCubic; delay: 500">
+    <a-entity geometry="primitive: plane; width: 5.2; height: 0.58" material="shader: flat; color: #1A1A1A; opacity: 0.85; transparent: true"></a-entity>
+    <a-entity geometry="primitive: plane; width: 5.24; height: 0.62" position="0 0 -0.01" material="shader: flat; color: #FFFFFF; opacity: 0.5; transparent: true"></a-entity>
+    <a-image src="#imgDitiLogo" width="0.90" height="0.20" position="-2.1 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.05; opacity: 1"></a-image>
+    <a-image src="#imgEsanLabs" width="0.90" height="0.65" position="2.0 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.05; opacity: 1"></a-image>
+    <a-text value="BIENVENIDO AL UNIVERSO ESAN" color="#E3173E" align="center" width="4.6" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 0.11 0.02"></a-text>
+    <a-text value="Descubre nuestro legado y vive el futuro" color="#DFDFDF" align="center" width="4.0" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 -0.13 0.02"></a-text>
+  </a-entity>
+  </a-entity>
+
+  <a-entity id="camara" camera look-controls position="0 1.6 0">
+    <a-entity cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
+
+
+    <a-entity id="btnSalirVideo360" position="0 -0.85 -1.5" visible="false"
+              animation__enter="property: scale; to: 1.15 1.15 1.15; dur: 180; startEvents: mouseenter"
+              animation__leave="property: scale; to: 1 1 1; dur: 180; startEvents: mouseleave">
+      <a-circle class="clickable" radius="0.1" color="#E3173E" material="shader: flat"></a-circle>
+      <a-plane width="0.072" height="0.012" color="#FFFFFF" material="shader: flat" position="0 0 0.012" rotation="0 0 45"></a-plane>
+      <a-plane width="0.072" height="0.012" color="#FFFFFF" material="shader: flat" position="0 0 0.012" rotation="0 0 -45"></a-plane>
+      <a-text value="Salir 360Â°" color="#FFFFFF" align="center" width="0.9" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 -0.14 0.01"></a-text>
+    </a-entity>
+
+    <a-entity id="panelMuyPronto" position="0 0 -1.8" visible="false" scale="0 0 0">
+      <!-- Resplandor exterior -->
+      <a-plane width="1.14" height="0.64" color="#E3173E" opacity="0.14" material="shader: flat; transparent: true" position="0 0 -0.012"></a-plane>
+      <!-- Fondo principal -->
+      <a-plane width="1.06" height="0.56" color="#0d0d1a" opacity="0.97" material="shader: flat; transparent: true"></a-plane>
+      <!-- Barra roja superior -->
+      <a-plane width="1.06" height="0.052" color="#E3173E" material="shader: flat" position="0 0.254 0.005"></a-plane>
+      <!-- Acento rojo izquierdo -->
+      <a-plane width="0.038" height="0.56" color="#E3173E" material="shader: flat" position="-0.511 0 0.005"></a-plane>
+      <!-- Icono reloj de arena -->
+      <a-plane width="0.19" height="0.19" canvas-icon="type: pronto" material="shader: flat; transparent: true" position="-0.35 0.02 0.01"></a-plane>
+      <!-- TÃ­tulo -->
+      <a-text value="Â¡Muy Pronto!" color="#E3173E" align="left" width="2.1" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="-0.19 0.1 0.012"></a-text>
+      <!-- SubtÃ­tulo -->
+      <a-text value="Esta secciÃ³n estarÃ¡ disponible\nmuy pronto. Â¡Mantente atento!" color="#DFDFDF" align="left" width="1.62" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="-0.19 -0.07 0.012"></a-text>
+      <!-- BotÃ³n cerrar (X) -->
+      <a-circle id="btnCerrarProno" class="clickable" radius="0.046" color="#E3173E" material="shader: flat" position="0.474 0.232 0.014"
+                animation__enter="property: scale; to: 1.3 1.3 1.3; dur: 150; startEvents: mouseenter"
+                animation__leave="property: scale; to: 1 1 1; dur: 150; startEvents: mouseleave">
+        <a-plane width="0.052" height="0.009" color="#FFFFFF" material="shader: flat" position="0 0 0.01" rotation="0 0 45"></a-plane>
+        <a-plane width="0.052" height="0.009" color="#FFFFFF" material="shader: flat" position="0 0 0.01" rotation="0 0 -45"></a-plane>
+      </a-circle>
+    </a-entity>
+  </a-entity>
+
+  <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 50" line="color: #FFD700"></a-entity>
+  <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 50" line="color: #FFD700"></a-entity>
+
+</a-scene>
+
+<script>
+const videoUni = document.querySelector('#videoUni');
+const videoFundador = document.querySelector('#videoFundador');
+const video8 = document.querySelector('#video8');
+const video7a = document.querySelector('#video7a');
+let videoActual = videoUni;
+
+const audioBienvenida = document.querySelector('#audioBienvenida');
+
+function desbloquearConMovimiento() {
+    audioBienvenida.play().then(() => {
+        window.removeEventListener('deviceorientation', desbloquearConMovimiento);
+        document.removeEventListener('mousemove', desbloquearConMovimiento);
+        console.log("Audio iniciado por sensor de movimiento.");
+    }).catch(e => {});
+}
+
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        audioBienvenida.playbackRate = 1.0;
+        audioBienvenida.play().catch(e => {
+            window.addEventListener('deviceorientation', desbloquearConMovimiento, {once: true});
+            document.addEventListener('mousemove', desbloquearConMovimiento, {once: true});
+            document.querySelector('a-scene').addEventListener('enter-vr', desbloquearConMovimiento, {once: true});
+        });
+    }, 500);
+});
+
+const pantalla = document.querySelector('#pantallaVideo');
+const grupoCine = document.querySelector('#grupoCine');
+const contenedorBtn = document.querySelector('#contenedorBoton');
+const contenedorBtnFundador = document.querySelector('#contenedorBotonFundador');
+const contenedorBtnLabs = document.querySelector('#contenedorBotonLabs');
+const contenedorNuevosLabs = document.querySelector('#contenedorNuevosLabs');
+const contenedorBtnVideoDirecto = document.querySelector('#contenedorBotonVideoDirecto');
+const contenedorBtnYoutube = document.querySelector('#contenedorBotonYoutube');
+const panelMuyPronto = document.querySelector('#panelMuyPronto');
+let timerProno = null;
+const redNeuronal = document.querySelector('#redNeuronal');
+const lineaFundador = document.querySelector('#lineaFundador');
+const lineaLabs = document.querySelector('#lineaLaboratorios');
+const lineaNuevosLabs = document.querySelector('#lineaNuevosLabs');
+const lineaVideoDirecto = document.querySelector('#lineaVideoDirecto');
+const lineaYoutube = document.querySelector('#lineaYoutube');
+const textoBoton = document.querySelector('#textoBoton');
+const textoBotonFundador = document.querySelector('#textoBotonFundador');
+const textoBotonLabs = document.querySelector('#textoBotonLabs');
+const textoBotonNuevosLabs = document.querySelector('#textoBotonNuevosLabs');
+const skyPrincipal = document.querySelector('#skyPrincipal');
+const skyButacas = document.querySelector('#skyButacas');
+const oscurecerButacas = document.querySelector('#oscurecerButacas');
+const barraProgreso = document.querySelector('#barraProgreso');
+const textoDuracion = document.querySelector('#textoDuracion');
+const camara = document.querySelector('#camara');
+const videoDirecto = document.querySelector('#videoDirecto');
+
+// Selectores para el cambio geomÃ©trico dinÃ¡mico del botÃ³n Pausa
+const lineap1 = document.querySelector('#lineaPausa1');
+const lineap2 = document.querySelector('#lineaPausa2');
+const triPlay = document.querySelector('#trianguloPlay');
+
+const ANCHO_BARRA = 20;
+
+function actualizarBarra() {
+  if (!videoActual || isNaN(videoActual.duration)) return;
+  const progreso = videoActual.currentTime / videoActual.duration;
+  barraProgreso.setAttribute('width', Math.max(0.01, progreso * ANCHO_BARRA));
+  barraProgreso.setAttribute('position', `${-ANCHO_BARRA / 2 + (progreso * ANCHO_BARRA) / 2} 0 0.01`);
+
+  const m = Math.floor(videoActual.currentTime / 60);
+  const s = Math.floor(videoActual.currentTime % 60).toString().padStart(2, '0');
+  const md = Math.floor(videoActual.duration / 60);
+  const sd = Math.floor(videoActual.duration % 60).toString().padStart(2, '0');
+  textoDuracion.setAttribute('value', `${m}:${s} / ${md}:${sd}`);
+}
+
+[videoUni, videoFundador, video8, video7a].forEach(v => v.addEventListener('timeupdate', actualizarBarra));
+
+function iniciarCine(videoSeleccionado) {
+  videoActual = videoSeleccionado;
+  videoActual.playbackRate = 1;
+  pantalla.setAttribute('src', `#${videoSeleccionado.id}`);
+  pantalla.setAttribute('scale', '0 0 0');
+
+  const rotation = camara.getAttribute('rotation');
+  const angleY = rotation.y;
+
+  if(videoSeleccionado.id === 'videoFundador') skyButacas.setAttribute('src', '#imgAuditorio2');
+  else if(videoSeleccionado.id === 'video8') skyButacas.setAttribute('src', '#imgEvento');
+  else if(videoSeleccionado.id === 'video7a') skyButacas.setAttribute('src', '#imgLabsNuevos');
+  else skyButacas.setAttribute('src', '#imgAuditorio');
+
+  skyButacas.setAttribute('rotation', `0 ${angleY - 90} 0`);
+
+  const angleRad = (angleY * Math.PI) / 180;
+  const posX = -25 * Math.sin(angleRad);
+  const posZ = -25 * Math.cos(angleRad);
+
+  grupoCine.setAttribute('position', `${posX} 2.5 ${posZ}`);
+  grupoCine.setAttribute('rotation', `0 ${angleY} 0`);
+
+  if (timerProno) { clearTimeout(timerProno); timerProno = null; }
+  panelMuyPronto.setAttribute('visible', 'false');
+  panelMuyPronto.setAttribute('scale', '0 0 0');
+  [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal, document.querySelector('#panelBienvenida'), skyPrincipal, document.querySelector('#panelPresentacionEsan')].forEach(el => { if(el) el.setAttribute('visible', 'false'); });
+  [skyButacas, oscurecerButacas, grupoCine].forEach(el => el.setAttribute('visible', 'true'));
+  oscurecerButacas.emit('luzOff');
+
+  videoActual.currentTime = 0;
+  setTimeout(() => {
+    pantalla.emit('videoEntra');
+    videoActual.play();
+  }, 500);
+}
+
+document.querySelector('#btnAccion').addEventListener('click', () => iniciarCine(videoUni));
+document.querySelector('#btnFundador').addEventListener('click', () => iniciarCine(videoFundador));
+document.querySelector('#btnLaboratorios').addEventListener('click', () => iniciarCine(video8));
+document.querySelector('#btnNuevosLabs').addEventListener('click', () => iniciarCine(video7a));
+
+function cerrarPanelProno() {
+    if (timerProno) { clearTimeout(timerProno); timerProno = null; }
+    panelMuyPronto.removeAttribute('animation__entrar');
+    panelMuyPronto.setAttribute('animation__salir', 'property: scale; to: 0 0 0; dur: 350; easing: easeInBack');
+    setTimeout(() => panelMuyPronto.setAttribute('visible', 'false'), 360);
+}
+
+const videoRobotica = document.querySelector('#videoRobotica');
+const esferaRobotica = document.querySelector('#esferaRobotica');
+const btnSalirVideo360 = document.querySelector('#btnSalirVideo360');
+let videoActivo360 = videoRobotica;
+
+function abrirVideoEn360(videoElemento, fuenteEsfera) {
+  // Ocultar jardÃ­n
+  skyPrincipal.setAttribute('visible', 'false');
+  [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs,
+  contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal].forEach(el => { if(el) el.setAttribute('visible', 'false'); });
+  const ep = document.querySelector('#panelPresentacionEsan');
+  if(ep) ep.setAttribute('visible', 'false');
+  if (timerProno) { clearTimeout(timerProno); timerProno = null; }
+  panelMuyPronto.setAttribute('visible', 'false');
+  panelMuyPronto.setAttribute('scale', '0 0 0');
+
+  videoActivo360 = videoElemento;
+  esferaRobotica.setAttribute('src', fuenteEsfera);
+
+  // Activar videosfera 360Â°
+  esferaRobotica.setAttribute('visible', 'true');
+  videoElemento.currentTime = 0;
+  videoElemento.play();
+  btnSalirVideo360.setAttribute('visible', 'true');
+}
+
+function abrirVideo360() {
+  abrirVideoEn360(videoRobotica, '#videoRobotica');
+}
+
+function abrirVideoDirecto() {
+  abrirVideoEn360(videoDirecto, '#videoDirecto');
+}
+
+function cerrarVideo360() {
+  videoActivo360.pause();
+  videoActivo360.currentTime = 0;
+  esferaRobotica.setAttribute('visible', 'false');
+  btnSalirVideo360.setAttribute('visible', 'false');
+
+  // Restaurar jardÃ­n
+  skyPrincipal.setAttribute('visible', 'true');
+  [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs,
+   contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal].forEach(el => { if(el) el.setAttribute('visible', 'true'); });
+  const ep = document.querySelector('#panelPresentacionEsan');
+  if(ep) ep.setAttribute('visible', 'true');
+}
+
+document.querySelector('#btnVideoDirecto').addEventListener('click', abrirVideoDirecto);
+document.querySelector('#btnYoutube').addEventListener('click', abrirVideo360);
+document.querySelector('#btnSalirVideo360').addEventListener('click', cerrarVideo360);
+document.querySelector('#btnCerrarProno').addEventListener('click', cerrarPanelProno);
+
+document.querySelector('#btnPausa').addEventListener('click', () => {
+  if (videoActual.paused) {
+      videoActual.play();
+      // Mostrar barras de pausa, ocultar triÃ¡ngulo Play
+      lineap1.setAttribute('visible', 'true');
+      lineap2.setAttribute('visible', 'true');
+      triPlay.setAttribute('visible', 'false');
+  }
+  else {
+      videoActual.pause();
+      // Ocultar barras de pausa, mostrar triÃ¡ngulo Play
+      lineap1.setAttribute('visible', 'false');
+      lineap2.setAttribute('visible', 'false');
+      triPlay.setAttribute('visible', 'true');
+  }
+});
+
+document.querySelector('#btnNormal').addEventListener('click', () => { videoActual.playbackRate = 1; });
+document.querySelector('#btnRapido').addEventListener('click', () => { videoActual.playbackRate = 2; });
+document.querySelector('#btnReset').addEventListener('click', () => {
+    videoActual.currentTime = 0;
+    videoActual.play();
+    lineap1.setAttribute('visible', 'true');
+    lineap2.setAttribute('visible', 'true');
+    triPlay.setAttribute('visible', 'false');
+});
+document.querySelector('#btnSalir').addEventListener('click', () => { videoActual.pause(); videoActual.dispatchEvent(new Event('ended')); });
+
+function finalizarVideo() {
+  pantalla.emit('videoSale');
+  lineap1.setAttribute('visible', 'true');
+  lineap2.setAttribute('visible', 'true');
+  triPlay.setAttribute('visible', 'false');
+
+  setTimeout(() => {
+    grupoCine.setAttribute('visible', 'false');
+    skyButacas.setAttribute('visible', 'false');
+    skyPrincipal.setAttribute('visible', 'true');
+    oscurecerButacas.emit('luzOn');
+
+    if(videoActual.id === 'videoUni') textoBoton.setAttribute('value', 'Nuestra\nHistoria');
+    if(videoActual.id === 'videoFundador') textoBotonFundador.setAttribute('value', 'Nuestro\nFundador');
+    if(videoActual.id === 'video8') textoBotonLabs.setAttribute('value', 'Carreras que\nTransforman');
+    if(videoActual.id === 'video7a') textoBotonNuevosLabs.setAttribute('value', 'Laboratorios\nTech');
+
+    const KissAnimacion = [
+      contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube,
+      lineaFundador, lineaLabs, lineaNuevosLabs, lineaVideoDirecto, lineaYoutube
+    ].filter(Boolean);
+
+    KissAnimacion.forEach(el => {
+      el.removeAttribute('animation');
+      el.removeAttribute('animation__start');
+      el.removeAttribute('animation__end');
+    });
+
+    contenedorBtn.setAttribute('position', '-1.65 1.6 -15');
+    contenedorBtnFundador.setAttribute('position', '-0.55 1.1 -15');
+    contenedorBtnLabs.setAttribute('position', '0.55 1.6 -15');
+    contenedorNuevosLabs.setAttribute('position', '1.65 1.1 -15');
+    if(contenedorBtnVideoDirecto) contenedorBtnVideoDirecto.setAttribute('position', '2.75 1.6 -15');
+    if(contenedorBtnYoutube) contenedorBtnYoutube.setAttribute('position', '3.85 1.1 -15');
+
+    lineaFundador.setAttribute('line', {start: '-1.65 1.6 -15', end: '-0.55 1.1 -15', color: '#FFFFFF'});
+    lineaLabs.setAttribute('line', {start: '-0.55 1.1 -15', end: '0.55 1.6 -15', color: '#FFFFFF'});
+    lineaNuevosLabs.setAttribute('line', {start: '0.55 1.6 -15', end: '1.65 1.1 -15', color: '#FFFFFF'});
+    if(lineaVideoDirecto) lineaVideoDirecto.setAttribute('line', {start: '1.65 1.1 -15', end: '2.75 1.6 -15', color: '#FFFFFF'});
+    if(lineaYoutube) lineaYoutube.setAttribute('line', {start: '2.75 1.6 -15', end: '3.85 1.1 -15', color: '#FFFFFF'});
+
+    [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal, document.querySelector('#panelPresentacionEsan')].forEach(el => { if(el) el.setAttribute('visible', 'true'); });
+
+    setTimeout(() => {
+      const dur = 6000;
+      const ease = "easeOutCubic";
+
+      contenedorBtn.setAttribute('animation', `property: position; from: -1.65 1.6 -15; to: -1.65 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      contenedorBtnFundador.setAttribute('animation', `property: position; from: -0.55 1.1 -15; to: -0.55 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+      contenedorBtnLabs.setAttribute('animation', `property: position; from: 0.55 1.6 -15; to: 0.55 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      contenedorNuevosLabs.setAttribute('animation', `property: position; from: 1.65 1.1 -15; to: 1.65 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+      if(contenedorBtnVideoDirecto) contenedorBtnVideoDirecto.setAttribute('animation', `property: position; from: 2.75 1.6 -15; to: 2.75 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      if(contenedorBtnYoutube) contenedorBtnYoutube.setAttribute('animation', `property: position; from: 3.85 1.1 -15; to: 3.85 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+
+      lineaFundador.setAttribute('animation__start', `property: line.start; from: -1.65 1.6 -15; to: -1.65 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      lineaFundador.setAttribute('animation__end', `property: line.end; from: -0.55 1.1 -15; to: -0.55 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+
+      lineaLabs.setAttribute('animation__start', `property: line.start; from: -0.55 1.1 -15; to: -0.55 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+      lineaLabs.setAttribute('animation__end', `property: line.end; from: 0.55 1.6 -15; to: 0.55 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+
+      lineaNuevosLabs.setAttribute('animation__start', `property: line.start; from: 0.55 1.6 -15; to: 0.55 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      lineaNuevosLabs.setAttribute('animation__end', `property: line.end; from: 1.65 1.1 -15; to: 1.65 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+
+      if(lineaVideoDirecto) {
+        lineaVideoDirecto.setAttribute('animation__start', `property: line.start; from: 1.65 1.1 -15; to: 1.65 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+        lineaVideoDirecto.setAttribute('animation__end', `property: line.end; from: 2.75 1.6 -15; to: 2.75 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      }
+
+      if(lineaYoutube) {
+        lineaYoutube.setAttribute('animation__start', `property: line.start; from: 2.75 1.6 -15; to: 2.75 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+        lineaYoutube.setAttribute('animation__end', `property: line.end; from: 3.85 1.1 -15; to: 3.85 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+      }
+
+      const ep = document.querySelector('#panelPresentacionEsan');
+      if(ep) {
+        ep.setAttribute('position', '0.55 2.82 -15');
+        ep.removeAttribute('animation__entrar');
+        ep.setAttribute('animation__entrar', 'property: position; from: 0.55 2.82 -15; to: 0.55 2.82 -2.5; dur: 5000; easing: easeOutCubic');
+      }
+    }, 100);
+
+  }, 1500);
+}
+
+[videoUni, videoFundador, video8, video7a].forEach(v => v.addEventListener('ended', finalizarVideo));
+</script>
+</body>
+</html>
