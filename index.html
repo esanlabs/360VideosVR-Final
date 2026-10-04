@@ -275,57 +275,105 @@
       });
     </script>
   <style>
-    #youtubeOverlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 9999;
-    }
-    #youtubeOverlay iframe {
-      position: absolute;
-      inset: 0;
+    html, body {
       width: 100%;
       height: 100%;
-      border: none;
+      margin: 0;
+      overflow: hidden;
+      background: #070710;
+      font-family: Arial, Helvetica, sans-serif;
     }
-    #btnCerrarYT {
-      position: absolute;
-      top: 14px;
-      right: 18px;
-      z-index: 10000;
-      background: #E3173E;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,.7);
+    #pantallaCarga {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+      color: #fff;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(227, 23, 62, .16), transparent 34%),
+        linear-gradient(145deg, #070710 0%, #111124 52%, #080811 100%);
+      transition: opacity .65s ease, visibility .65s ease;
     }
-    #btnCerrarYT:hover { background: #c01030; }
+    #pantallaCarga::before {
+      content: '';
+      position: absolute;
+      width: 44vmax;
+      height: 44vmax;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 50%;
+      box-shadow: 0 0 0 9vmax rgba(255,255,255,.018), 0 0 0 18vmax rgba(227,23,62,.018);
+      animation: respirarCarga 2.8s ease-in-out infinite alternate;
+    }
+    #pantallaCarga.carga-lista {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .carga-contenido {
+      position: relative;
+      width: min(82vw, 430px);
+      text-align: center;
+    }
+    .carga-marca {
+      margin: 0 0 8px;
+      color: #fff;
+      font-size: clamp(25px, 5vw, 38px);
+      font-weight: 800;
+      letter-spacing: .14em;
+    }
+    .carga-marca span { color: #E3173E; }
+    .carga-subtitulo {
+      margin: 0 0 28px;
+      color: #bfc0ca;
+      font-size: 13px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .carga-barra {
+      height: 5px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      box-shadow: inset 0 0 8px rgba(0,0,0,.45);
+    }
+    #cargaProgreso {
+      width: 8%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #E3173E, #ff5d78);
+      box-shadow: 0 0 16px rgba(227,23,62,.8);
+      transition: width .35s ease;
+    }
+    #cargaEstado {
+      min-height: 18px;
+      margin: 12px 0 0;
+      color: #ddd;
+      font-size: 12px;
+    }
+    @keyframes respirarCarga {
+      from { transform: scale(.96); opacity: .55; }
+      to { transform: scale(1.04); opacity: 1; }
+    }
   </style>
 </head>
 
 <body>
 
-<!-- Overlay fullscreen YouTube -->
-<div id="youtubeOverlay">
-  <button id="btnCerrarYT" onclick="cerrarYoutube()" title="Cerrar">&#x2715;</button>
-  <iframe id="youtubeFrame" src=""
-          allow="autoplay; fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
-          allowfullscreen>
-  </iframe>
+<div id="pantallaCarga" role="status" aria-live="polite" aria-label="Cargando experiencia ESAN">
+  <div class="carga-contenido">
+    <p class="carga-marca">ESAN <span>360</span></p>
+    <p class="carga-subtitulo">Preparando la experiencia</p>
+    <div class="carga-barra" aria-hidden="true"><div id="cargaProgreso"></div></div>
+    <p id="cargaEstado">Cargando entorno virtual...</p>
+  </div>
 </div>
 
 <a-scene>
 
-  <a-assets>
+  <a-assets timeout="20000">
     <img id="imgLobby" src="jardinnn.jpg">
     <img id="imgAuditorio" src="btcss-1.jpg">
     <img id="imgAuditorio2" src="btcss-1.jpg">
@@ -335,8 +383,6 @@
     <img id="imgPiso" src="pisoLogo.webp">
     <img id="imgDitiLogo" src="DITI_LOGO_BLANCO.png">
     <img id="imgEsanLabs" src="esanLabs.png">
-    <img id="imagenLibro" src="libroo.png" crossorigin="anonymous">
-
     <audio id="audioBienvenida" src="audio.mp3" preload="auto" crossorigin="anonymous"></audio>
 
     <video id="videoUni" src="video2.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
@@ -474,6 +520,11 @@
               animation__start="property: line.start; to: 2.75 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
               animation__end="property: line.end; to: 3.85 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
     </a-entity>
+    <a-entity id="lineaEsan360"
+              line="start: 3.85 1.1 -15; end: 4.95 1.6 -15; color: #FFFFFF; opacity: 0.6"
+              animation__start="property: line.start; to: 3.85 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000"
+              animation__end="property: line.end; to: 4.95 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    </a-entity>
   </a-entity>
 
   <a-entity id="contenedorBoton" position="-1.65 1.6 -15"
@@ -561,7 +612,7 @@
         <a-text id="textoBotonVideoDirecto" value="Video 360\n1" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
       </a-entity>
 
-        <a-entity id="contenedorBotonYoutube" position="3.85 1.1 -15"
+  <a-entity id="contenedorBotonYoutube" position="3.85 1.1 -15"
           animation="property: position; to: 3.85 1.1 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
     <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
     <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
@@ -577,14 +628,30 @@
     <a-text value="Video 360\n2" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
     <a-text id="textoBotonYoutube" value="Video 360\n2" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
   </a-entity>
-  <a-entity id="panelPresentacionEsan" position="0.90 2.82 -15" scale="1 1 1"
-            animation__entrar="property: position; from: 1.35 2.82 -15; to: 1.35 2.82 -2.5; dur: 7000; easing: easeOutCubic; delay: 500">
-    <a-entity geometry="primitive: plane; width: 5.2; height: 0.58" material="shader: flat; color: #1A1A1A; opacity: 0.85; transparent: true"></a-entity>
-    <a-entity geometry="primitive: plane; width: 5.24; height: 0.62" position="0 0 -0.01" material="shader: flat; color: #FFFFFF; opacity: 0.5; transparent: true"></a-entity>
-    <a-image src="#imgDitiLogo" width="0.90" height="0.20" position="-2.1 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.05; opacity: 1"></a-image>
-    <a-image src="#imgEsanLabs" width="0.90" height="0.65" position="2.0 0 0. 0.03" material="shader: flat; transparent: true; alphaTest: 0.05; opacity: 1"></a-image>
-    <a-text value="BIENVENIDO AL UNIVERSO ESAN" color="#E3173E" align="center" width="4.6" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 0.11 0.02"></a-text>
-    <a-text value="Descubre nuestro legado y vive el futuro" color="#DFDFDF" align="center" width="4.0" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 -0.13 0.02"></a-text>
+  <a-entity id="contenedorBotonEsan360" position="4.95 1.6 -15"
+            animation="property: position; to: 4.95 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 10000">
+    <a-ring material="shader: flat; color: #FFFFFF; opacity: 0.85" radius-inner="0.41" radius-outer="0.45" position="0 0 -0.01"></a-ring>
+    <a-ring material="shader: flat; color: #E3173E; transparent: true; opacity: 0.5"
+            radius-inner="0.46" radius-outer="0.53" position="0 0 -0.02"
+            animation__pulse="property: scale; from: 1 1 1; to: 1.18 1.18 1.18; dur: 1900; loop: true; easing: easeInOutSine; dir: alternate"
+            animation__fade="property: material.opacity; from: 0.5; to: 0; dur: 1900; loop: true; easing: easeInOutSine; dir: alternate">
+    </a-ring>
+    <a-circle id="btnEsan360" class="clickable" color="#0d0d1a" opacity="0.95" radius="0.4"
+              animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 300; startEvents: mouseenter"
+              animation__mouseleave="property: scale; to: 1 1 1; dur: 300; startEvents: mouseleave">
+      <a-circle radius="0.38" canvas-icon="type: tour" material="shader: flat" position="0 0 0.02"></a-circle>
+    </a-circle>
+    <a-text value="Ver ESAN\n360" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#000000" position="0.01 -0.49 0.04"></a-text>
+    <a-text value="Ver ESAN\n360" align="center" baseline="top" width="1.2" wrap-count="12" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" color="#FFFFFF" position="0 -0.48 0.05"></a-text>
+  </a-entity>
+  <a-entity id="panelPresentacionEsan" position="1.65 2.82 -15" scale="1 1 1"
+            animation__entrar="property: position; from: 1.65 2.82 -15; to: 1.65 2.82 -2.5; dur: 7000; easing: easeOutCubic; delay: 500">
+    <a-entity geometry="primitive: plane; width: 7.45; height: 0.58" material="shader: flat; color: #1A1A1A; opacity: 0.88; transparent: true"></a-entity>
+    <a-entity geometry="primitive: plane; width: 7.49; height: 0.62" position="0 0 -0.01" material="shader: flat; color: #FFFFFF; opacity: 0.5; transparent: true"></a-entity>
+    <a-image src="#imgDitiLogo" width="0.90" height="0.20" position="-3.2 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.05; opacity: 1"></a-image>
+    <a-image src="#imgEsanLabs" width="0.90" height="0.65" position="3.1 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.05; opacity: 1"></a-image>
+    <a-text value="BIENVENIDO AL UNIVERSO ESAN" color="#E3173E" align="center" width="5.2" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 0.11 0.02"></a-text>
+    <a-text value="Descubre nuestro legado y vive el futuro" color="#DFDFDF" align="center" width="4.4" font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" position="0 -0.13 0.02"></a-text>
   </a-entity>
   </a-entity>
 
@@ -632,11 +699,42 @@
 </a-scene>
 
 <script>
+const pantallaCarga = document.querySelector('#pantallaCarga');
+const cargaProgreso = document.querySelector('#cargaProgreso');
+const cargaEstado = document.querySelector('#cargaEstado');
+const escena = document.querySelector('a-scene');
+let progresoVisual = 8;
+let cargaFinalizada = false;
+
+const animacionCarga = setInterval(() => {
+  if (cargaFinalizada) return;
+  progresoVisual = Math.min(88, progresoVisual + Math.max(1, (90 - progresoVisual) * 0.08));
+  cargaProgreso.style.width = `${progresoVisual}%`;
+  if (progresoVisual > 55) cargaEstado.textContent = 'Preparando videos y controles...';
+  else if (progresoVisual > 25) cargaEstado.textContent = 'Construyendo el entorno 360...';
+}, 320);
+
+function completarCarga() {
+  if (cargaFinalizada) return;
+  cargaFinalizada = true;
+  clearInterval(animacionCarga);
+  cargaProgreso.style.width = '100%';
+  cargaEstado.textContent = 'Experiencia lista';
+  setTimeout(() => pantallaCarga.classList.add('carga-lista'), 350);
+  setTimeout(() => pantallaCarga.remove(), 1100);
+}
+
+if (escena.hasLoaded) completarCarga();
+else escena.addEventListener('loaded', completarCarga, { once: true });
+// Evita que un recurso remoto lento deje la interfaz bloqueada indefinidamente.
+setTimeout(completarCarga, 20000);
+
 const videoUni = document.querySelector('#videoUni');
 const videoFundador = document.querySelector('#videoFundador');
 const video8 = document.querySelector('#video8');
 const video7a = document.querySelector('#video7a');
 let videoActual = videoUni;
+let cineActivo = false;
 
 const audioBienvenida = document.querySelector('#audioBienvenida');
 
@@ -667,6 +765,7 @@ const contenedorBtnLabs = document.querySelector('#contenedorBotonLabs');
 const contenedorNuevosLabs = document.querySelector('#contenedorNuevosLabs');
 const contenedorBtnVideoDirecto = document.querySelector('#contenedorBotonVideoDirecto');
 const contenedorBtnYoutube = document.querySelector('#contenedorBotonYoutube');
+const contenedorBtnEsan360 = document.querySelector('#contenedorBotonEsan360');
 const panelMuyPronto = document.querySelector('#panelMuyPronto');
 let timerProno = null;
 const redNeuronal = document.querySelector('#redNeuronal');
@@ -675,6 +774,7 @@ const lineaLabs = document.querySelector('#lineaLaboratorios');
 const lineaNuevosLabs = document.querySelector('#lineaNuevosLabs');
 const lineaVideoDirecto = document.querySelector('#lineaVideoDirecto');
 const lineaYoutube = document.querySelector('#lineaYoutube');
+const lineaEsan360 = document.querySelector('#lineaEsan360');
 const textoBoton = document.querySelector('#textoBoton');
 const textoBotonFundador = document.querySelector('#textoBotonFundador');
 const textoBotonLabs = document.querySelector('#textoBotonLabs');
@@ -710,6 +810,14 @@ function actualizarBarra() {
 [videoUni, videoFundador, video8, video7a].forEach(v => v.addEventListener('timeupdate', actualizarBarra));
 
 function iniciarCine(videoSeleccionado) {
+  if (cineActivo) return;
+  cineActivo = true;
+  [videoUni, videoFundador, video8, video7a].forEach(video => {
+    if (video !== videoSeleccionado) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  });
   videoActual = videoSeleccionado;
   videoActual.playbackRate = 1;
   pantalla.setAttribute('src', `#${videoSeleccionado.id}`);
@@ -735,14 +843,17 @@ function iniciarCine(videoSeleccionado) {
   if (timerProno) { clearTimeout(timerProno); timerProno = null; }
   panelMuyPronto.setAttribute('visible', 'false');
   panelMuyPronto.setAttribute('scale', '0 0 0');
-  [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal, document.querySelector('#panelBienvenida'), skyPrincipal, document.querySelector('#panelPresentacionEsan')].forEach(el => { if(el) el.setAttribute('visible', 'false'); });
+  [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, contenedorBtnEsan360, redNeuronal, document.querySelector('#panelBienvenida'), skyPrincipal, document.querySelector('#panelPresentacionEsan')].forEach(el => { if(el) el.setAttribute('visible', 'false'); });
   [skyButacas, oscurecerButacas, grupoCine].forEach(el => el.setAttribute('visible', 'true'));
   oscurecerButacas.emit('luzOff');
 
   videoActual.currentTime = 0;
   setTimeout(() => {
     pantalla.emit('videoEntra');
-    videoActual.play();
+    videoActual.play().catch(error => {
+      console.error('No se pudo iniciar el video:', error);
+      finalizarVideo(videoActual);
+    });
   }, 500);
 }
 
@@ -762,12 +873,15 @@ const videoRobotica = document.querySelector('#videoRobotica');
 const esferaRobotica = document.querySelector('#esferaRobotica');
 const btnSalirVideo360 = document.querySelector('#btnSalirVideo360');
 let videoActivo360 = videoRobotica;
+let video360Activo = false;
 
 function abrirVideoEn360(videoElemento, fuenteEsfera) {
+  if (video360Activo) return;
+  video360Activo = true;
   // Ocultar jardÃ­n
   skyPrincipal.setAttribute('visible', 'false');
   [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs,
-  contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal].forEach(el => { if(el) el.setAttribute('visible', 'false'); });
+  contenedorBtnVideoDirecto, contenedorBtnYoutube, contenedorBtnEsan360, redNeuronal].forEach(el => { if(el) el.setAttribute('visible', 'false'); });
   const ep = document.querySelector('#panelPresentacionEsan');
   if(ep) ep.setAttribute('visible', 'false');
   if (timerProno) { clearTimeout(timerProno); timerProno = null; }
@@ -780,8 +894,11 @@ function abrirVideoEn360(videoElemento, fuenteEsfera) {
   // Activar videosfera 360Â°
   esferaRobotica.setAttribute('visible', 'true');
   videoElemento.currentTime = 0;
-  videoElemento.play();
   btnSalirVideo360.setAttribute('visible', 'true');
+  videoElemento.play().catch(error => {
+    console.error('No se pudo iniciar el video 360:', error);
+    cerrarVideo360();
+  });
 }
 
 function abrirVideo360() {
@@ -793,6 +910,8 @@ function abrirVideoDirecto() {
 }
 
 function cerrarVideo360() {
+  if (!video360Activo) return;
+  video360Activo = false;
   videoActivo360.pause();
   videoActivo360.currentTime = 0;
   esferaRobotica.setAttribute('visible', 'false');
@@ -801,14 +920,19 @@ function cerrarVideo360() {
   // Restaurar jardÃ­n
   skyPrincipal.setAttribute('visible', 'true');
   [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs,
-   contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal].forEach(el => { if(el) el.setAttribute('visible', 'true'); });
+   contenedorBtnVideoDirecto, contenedorBtnYoutube, contenedorBtnEsan360, redNeuronal].forEach(el => { if(el) el.setAttribute('visible', 'true'); });
   const ep = document.querySelector('#panelPresentacionEsan');
   if(ep) ep.setAttribute('visible', 'true');
 }
 
 document.querySelector('#btnVideoDirecto').addEventListener('click', abrirVideoDirecto);
 document.querySelector('#btnYoutube').addEventListener('click', abrirVideo360);
-document.querySelector('#btnSalirVideo360').addEventListener('click', cerrarVideo360);
+document.querySelector('#btnEsan360').addEventListener('click', () => {
+  window.location.href = 'https://esanlabs.github.io/Esan-Experience-Recorrido-VR/';
+});
+document.querySelector('#btnSalirVideo360 .clickable').addEventListener('click', cerrarVideo360);
+videoDirecto.addEventListener('ended', cerrarVideo360);
+videoRobotica.addEventListener('ended', cerrarVideo360);
 document.querySelector('#btnCerrarProno').addEventListener('click', cerrarPanelProno);
 
 document.querySelector('#btnPausa').addEventListener('click', () => {
@@ -837,9 +961,12 @@ document.querySelector('#btnReset').addEventListener('click', () => {
     lineap2.setAttribute('visible', 'true');
     triPlay.setAttribute('visible', 'false');
 });
-document.querySelector('#btnSalir').addEventListener('click', () => { videoActual.pause(); videoActual.dispatchEvent(new Event('ended')); });
+document.querySelector('#btnSalir').addEventListener('click', () => finalizarVideo(videoActual));
 
-function finalizarVideo() {
+function finalizarVideo(videoFinalizado = videoActual) {
+  if (!cineActivo || videoFinalizado !== videoActual) return;
+  cineActivo = false;
+  videoActual.pause();
   pantalla.emit('videoSale');
   lineap1.setAttribute('visible', 'true');
   lineap2.setAttribute('visible', 'true');
@@ -857,8 +984,8 @@ function finalizarVideo() {
     if(videoActual.id === 'video7a') textoBotonNuevosLabs.setAttribute('value', 'Laboratorios\nTech');
 
     const KissAnimacion = [
-      contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube,
-      lineaFundador, lineaLabs, lineaNuevosLabs, lineaVideoDirecto, lineaYoutube
+      contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, contenedorBtnEsan360,
+      lineaFundador, lineaLabs, lineaNuevosLabs, lineaVideoDirecto, lineaYoutube, lineaEsan360
     ].filter(Boolean);
 
     KissAnimacion.forEach(el => {
@@ -873,14 +1000,16 @@ function finalizarVideo() {
     contenedorNuevosLabs.setAttribute('position', '1.65 1.1 -15');
     if(contenedorBtnVideoDirecto) contenedorBtnVideoDirecto.setAttribute('position', '2.75 1.6 -15');
     if(contenedorBtnYoutube) contenedorBtnYoutube.setAttribute('position', '3.85 1.1 -15');
+    if(contenedorBtnEsan360) contenedorBtnEsan360.setAttribute('position', '4.95 1.6 -15');
 
     lineaFundador.setAttribute('line', {start: '-1.65 1.6 -15', end: '-0.55 1.1 -15', color: '#FFFFFF'});
     lineaLabs.setAttribute('line', {start: '-0.55 1.1 -15', end: '0.55 1.6 -15', color: '#FFFFFF'});
     lineaNuevosLabs.setAttribute('line', {start: '0.55 1.6 -15', end: '1.65 1.1 -15', color: '#FFFFFF'});
     if(lineaVideoDirecto) lineaVideoDirecto.setAttribute('line', {start: '1.65 1.1 -15', end: '2.75 1.6 -15', color: '#FFFFFF'});
     if(lineaYoutube) lineaYoutube.setAttribute('line', {start: '2.75 1.6 -15', end: '3.85 1.1 -15', color: '#FFFFFF'});
+    if(lineaEsan360) lineaEsan360.setAttribute('line', {start: '3.85 1.1 -15', end: '4.95 1.6 -15', color: '#FFFFFF'});
 
-    [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, redNeuronal, document.querySelector('#panelPresentacionEsan')].forEach(el => { if(el) el.setAttribute('visible', 'true'); });
+    [contenedorBtn, contenedorBtnFundador, contenedorBtnLabs, contenedorNuevosLabs, contenedorBtnVideoDirecto, contenedorBtnYoutube, contenedorBtnEsan360, redNeuronal, document.querySelector('#panelPresentacionEsan')].forEach(el => { if(el) el.setAttribute('visible', 'true'); });
 
     setTimeout(() => {
       const dur = 6000;
@@ -892,6 +1021,7 @@ function finalizarVideo() {
       contenedorNuevosLabs.setAttribute('animation', `property: position; from: 1.65 1.1 -15; to: 1.65 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
       if(contenedorBtnVideoDirecto) contenedorBtnVideoDirecto.setAttribute('animation', `property: position; from: 2.75 1.6 -15; to: 2.75 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
       if(contenedorBtnYoutube) contenedorBtnYoutube.setAttribute('animation', `property: position; from: 3.85 1.1 -15; to: 3.85 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+      if(contenedorBtnEsan360) contenedorBtnEsan360.setAttribute('animation', `property: position; from: 4.95 1.6 -15; to: 4.95 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
 
       lineaFundador.setAttribute('animation__start', `property: line.start; from: -1.65 1.6 -15; to: -1.65 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
       lineaFundador.setAttribute('animation__end', `property: line.end; from: -0.55 1.1 -15; to: -0.55 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
@@ -912,18 +1042,25 @@ function finalizarVideo() {
         lineaYoutube.setAttribute('animation__end', `property: line.end; from: 3.85 1.1 -15; to: 3.85 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
       }
 
+      if(lineaEsan360) {
+        lineaEsan360.setAttribute('animation__start', `property: line.start; from: 3.85 1.1 -15; to: 3.85 1.1 -2.5; dur: ${dur}; easing: ${ease}`);
+        lineaEsan360.setAttribute('animation__end', `property: line.end; from: 4.95 1.6 -15; to: 4.95 1.6 -2.5; dur: ${dur}; easing: ${ease}`);
+      }
+
       const ep = document.querySelector('#panelPresentacionEsan');
       if(ep) {
-        ep.setAttribute('position', '0.55 2.82 -15');
+        ep.setAttribute('position', '1.65 2.82 -15');
         ep.removeAttribute('animation__entrar');
-        ep.setAttribute('animation__entrar', 'property: position; from: 0.55 2.82 -15; to: 0.55 2.82 -2.5; dur: 5000; easing: easeOutCubic');
+        ep.setAttribute('animation__entrar', 'property: position; from: 1.65 2.82 -15; to: 1.65 2.82 -2.5; dur: 5000; easing: easeOutCubic');
       }
     }, 100);
 
   }, 1500);
 }
 
-[videoUni, videoFundador, video8, video7a].forEach(v => v.addEventListener('ended', finalizarVideo));
+[videoUni, videoFundador, video8, video7a].forEach(video => {
+  video.addEventListener('ended', () => finalizarVideo(video));
+});
 </script>
 </body>
 </html>
